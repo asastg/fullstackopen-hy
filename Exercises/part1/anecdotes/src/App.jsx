@@ -1,4 +1,6 @@
 import { useState } from 'react';
+const Title = ({ text }) => <h1>{text}</h1>;
+const Button = ({ onSmash, text }) => <button onClick={onSmash}>{text}</button>;
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -19,12 +21,25 @@ const App = () => {
     copy[selected] = copy[selected] + 1;
     setPoints(copy);
   };
+
+  const mostVoted = () => {
+    let votes = 0;
+    for (let i = 0; i < points.length; i++) {
+      if (points[i] >= votes) {
+        votes = points[i];
+      }
+    }
+    return anecdotes[points.indexOf(votes)];
+  };
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
+      <Title text={'Anecdote of the day'} />
+      {anecdotes[selected]}
       <p>has {points[selected]} votes</p>
-      <button onClick={handleClickVote}>vote</button>
-      <button onClick={handleClickRandom}>next anecdote</button>
+      <Button onSmash={handleClickVote} text={'vote'}></Button>
+      <Button onSmash={handleClickRandom} text={'next anecdote'}></Button>
+      <Title text={'Anecdote with most votes'} />
+      {mostVoted()}
     </div>
   );
 };
