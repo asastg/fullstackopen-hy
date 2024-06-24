@@ -11,6 +11,18 @@ const Item = ({ result, value }) => {
     </>
   );
 };
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
+  return (
+    <>
+      <Item result={'good'} value={good} />
+      <Item result={'neutral'} value={neutral} />
+      <Item result={'bad'} value={bad} />
+      <Item result={'all'} value={all} />
+      <Item result={'average'} value={average()} />
+      <Item result={'positive'} value={positive()} />
+    </>
+  );
+};
 const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
@@ -45,12 +57,7 @@ const App = () => {
       <Button handleClick={handleClickNeutral} text={'neutral'} />
       <Button handleClick={handleClickBad} text={'bad'} />
       <h1>Statistics</h1>
-      <Item result={'good'} value={good} />
-      <Item result={'neutral'} value={neutral} />
-      <Item result={'bad'} value={bad} />
-      <Item result={'all'} value={all} />
-      <Item result={'average'} value={average()} />
-      <Item result={'positive'} value={positive()} />
+      <Statistics good={good} neutral={neutral} bad={bad} all={all} average={average} positive={positive} />
     </div>
   );
 };
