@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>;
 
-const Item = ({ result, value }) => {
+const StatisticLine = ({ text, value }) => {
   return (
     <>
       <p>
-        {result} {value}
+        {text} {value}
       </p>
     </>
   );
@@ -17,12 +17,12 @@ const Statistics = ({ good, neutral, bad, all, average, positive }) => {
   }
   return (
     <>
-      <Item result={'good'} value={good} />
-      <Item result={'neutral'} value={neutral} />
-      <Item result={'bad'} value={bad} />
-      <Item result={'all'} value={all} />
-      <Item result={'average'} value={average()} />
-      <Item result={'positive'} value={positive()} />
+      <StatisticLine text={'good'} value={good} />
+      <StatisticLine text={'neutral'} value={neutral} />
+      <StatisticLine text={'bad'} value={bad} />
+      <StatisticLine text={'all'} value={all} />
+      <StatisticLine text={'average'} value={average()} />
+      <StatisticLine text={'positive'} value={positive()} />
     </>
   );
 };
