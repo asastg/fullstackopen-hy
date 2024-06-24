@@ -12,6 +12,9 @@ const Item = ({ result, value }) => {
   );
 };
 const Statistics = ({ good, neutral, bad, all, average, positive }) => {
+  if (!all) {
+    return <>No feedback given</>;
+  }
   return (
     <>
       <Item result={'good'} value={good} />
