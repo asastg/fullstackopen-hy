@@ -71,7 +71,14 @@ const App = () => {
       number: number,
     };
     if (persons.some((obj) => obj.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const person = persons.find((p) => p.name === newName);
+        const id = person.id;
+        const changePerson = { ...person, number: number };
+        personService.update(id, changePerson).then((returnedPerson) => {
+          setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
+        });
+      }
     } else {
       personService.create(nameObject).then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
     }
@@ -99,7 +106,6 @@ const App = () => {
   };
 
   const personsToShow = showAll ? persons : persons.filter((person) => person.name === nameFilter);
-
   return (
     <>
       <Title title={'Phonebook'} />
