@@ -46,6 +46,20 @@ const App = () => {
   const [number, setNumber] = useState('');
   const [nameFilter, setNameFilter] = useState('');
   const [showAll, setShowAll] = useState(true);
+  const [message, setMessage] = useState(null);
+  const [err, setErr] = useState(null);
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null;
+    }
+    return <div className="not">{message}</div>;
+  };
+  const Err = ({ message }) => {
+    if (message === null) {
+      return null;
+    }
+    return <div className="err">{message}</div>;
+  };
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
@@ -75,13 +89,26 @@ const App = () => {
         const person = persons.find((p) => p.name === newName);
         const id = person.id;
         const changePerson = { ...person, number: number };
-        personService.update(id, changePerson).then((returnedPerson) => {
-          setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
-        });
+        personService
+          .update(id, changePerson)
+          .then((returnedPerson) => {
+            setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
+            setMessage(`Updated ${returnedPerson.name}`);
+          })
+          .catch((error) => {
+            setErr(`Information of ${person.name} has already been removed from server`);
+          });
       }
     } else {
-      personService.create(nameObject).then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
+      personService.create(nameObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setMessage(`Added ${returnedPerson.name}`);
+      });
     }
+    setTimeout(() => {
+      setMessage(null);
+      setErr(null);
+    }, 4000);
     setNewName('');
     setNumber('');
   };
@@ -109,6 +136,8 @@ const App = () => {
   return (
     <>
       <Title title={'Phonebook'} />
+      <Notification message={message} />
+      <Err message={err} />
       filter shown with <input onChange={handleNameFilter} />
       <Title title={'Add a new'} />
       <Form addPerson={addPerson} newName={newName} number={number} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
