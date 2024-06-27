@@ -38,6 +38,7 @@ const App = () => {
       setPersons(response.data);
     });
   }, []);
+
   const handleNameFilter = (event) => {
     setShowAll(false);
     setNameFilter(event.target.value);
@@ -60,7 +61,7 @@ const App = () => {
     if (persons.some((obj) => obj.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat(nameObject));
+      axios.post('http://localhost:3001/persons', nameObject).then((response) => setPersons(persons.concat(response.data)));
     }
     setNewName('');
     setNumber('');
