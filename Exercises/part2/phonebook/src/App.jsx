@@ -1,16 +1,29 @@
 import { useEffect, useState } from 'react';
 import personService from './services/persons';
-const Person = ({ name, number }) => {
+const Person = ({ name, number, remove }) => {
+  const reallyRemove = () => {
+    if (window.confirm(`Delete ${name}?`)) {
+      remove();
+    }
+  };
   return (
     <div>
-      {name} {number}
+      {name} {number} <button onClick={reallyRemove}>delete</button>
     </div>
   );
 };
 const Title = ({ title }) => {
   return <h2>{title}</h2>;
 };
-const Phonelist = ({ personsToShow }) => personsToShow.map((person) => <Person key={person.id} name={person.name} number={person.number} />);
+const Phonelist = ({ personsToShow, removeItem }) => {
+  return (
+    <>
+      {personsToShow.map((person) => (
+        <Person key={person.id} name={person.name} number={person.number} remove={() => removeItem(person.id)} />
+      ))}
+    </>
+  );
+};
 
 const Form = ({ addPerson, newName, handleNameChange, number, handleNumberChange }) => {
   return (
@@ -38,7 +51,6 @@ const App = () => {
       setPersons(initialPersons);
     });
   }, []);
-
   const handleNameFilter = (event) => {
     setShowAll(false);
     setNameFilter(event.target.value);
@@ -80,6 +92,11 @@ const App = () => {
   //   }
   //   setNewName('');
   // };
+  const removeItem = (id) => {
+    personService.remove(id).then(() => {
+      setPersons(persons.filter((person) => person.id !== id));
+    });
+  };
 
   const personsToShow = showAll ? persons : persons.filter((person) => person.name === nameFilter);
 
@@ -90,7 +107,7 @@ const App = () => {
       <Title title={'Add a new'} />
       <Form addPerson={addPerson} newName={newName} number={number} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
       <Title title={'Numbers'} />
-      <Phonelist personsToShow={personsToShow} />
+      <Phonelist personsToShow={personsToShow} removeItem={removeItem} />
     </>
   );
 };
