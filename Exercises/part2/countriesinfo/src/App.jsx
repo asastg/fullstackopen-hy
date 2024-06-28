@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const ShowInfo = ({ country }) => {
   const keys = Object.keys(country.languages);
-  console.log(country);
   return (
     <>
       <h1>{country.name.common}</h1>
@@ -19,8 +18,7 @@ const ShowInfo = ({ country }) => {
     </>
   );
 };
-const ShowList = ({ list }) => {
-  console.log(list.length);
+const ShowList = ({ list, setCountryFilter }) => {
   if (list.length > 10) {
     return <div>Too many matches, specify another filter</div>;
   }
@@ -28,7 +26,7 @@ const ShowList = ({ list }) => {
     return (
       <div>
         {list.map((c) => (
-          <Country key={c.name.common} country={c.name.common} />
+          <Country key={c.name.common} country={c.name.common} c={c} setCountryFilter={setCountryFilter} />
         ))}
       </div>
     );
@@ -39,8 +37,13 @@ const ShowList = ({ list }) => {
     </>
   );
 };
-const Country = ({ country }) => {
-  return <p>{country}</p>;
+const Country = ({ country, c, setCountryFilter }) => {
+  const setCountry = () => setCountryFilter([c]);
+  return (
+    <div>
+      {country} <button onClick={setCountry}>show</button>
+    </div>
+  );
 };
 
 const App = () => {
@@ -65,7 +68,7 @@ const App = () => {
         find countries <input value={searchValue} onChange={handleChange} />
       </div>
       <div>
-        <ShowList list={countryFilter} />
+        <ShowList list={countryFilter} setCountryFilter={setCountryFilter} />
       </div>
     </div>
   );
