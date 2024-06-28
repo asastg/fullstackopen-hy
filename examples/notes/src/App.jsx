@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
 import noteService from './services/notes';
 import Note from './components/Note';
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+  return <div className="err">{message}</div>;
+};
 const App = () => {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(null);
   const [newNote, setNewNote] = useState('a new note');
   const [showAll, setShowAll] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('some error happend...');
+  const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
       setNotes(initialNotes);
     });
   }, []);
-
-  const Notification = ({ message }) => {
-    if (message === null) {
-      return null;
-    }
-    return <div className="err">{message}</div>;
-  };
 
   const toggleImportanceOf = (id) => {
     const note = notes.find((n) => n.id === id);
@@ -50,7 +49,6 @@ const App = () => {
       setNewNote('');
     });
   };
-  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
   const Footer = () => {
     const footerStyle = {
@@ -65,23 +63,28 @@ const App = () => {
       </div>
     );
   };
-  return (
-    <div>
-      <h1>Notes</h1>
-      <Notification message={errorMessage} />
-      <button onClick={() => setShowAll(!showAll)}>show {showAll ? 'important' : 'all'}</button>
-      <ul>
-        {notesToShow.map((note) => (
-          <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
-        ))}
-      </ul>
-      <form onSubmit={addNote}>
-        <input value={newNote} onChange={handleNoteChange} />
-        <button type="submit">save</button>
-      </form>
-      <Footer />
-    </div>
-  );
+  if (!notes) {
+    return null;
+  } else {
+    const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+    return (
+      <div>
+        <h1>Notes</h1>
+        <Notification message={errorMessage} />
+        <button onClick={() => setShowAll(!showAll)}>show {showAll ? 'important' : 'all'}</button>
+        <ul>
+          {notesToShow.map((note) => (
+            <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
+          ))}
+        </ul>
+        <form onSubmit={addNote}>
+          <input value={newNote} onChange={handleNoteChange} />
+          <button type="submit">save</button>
+        </form>
+        <Footer />
+      </div>
+    );
+  }
 };
 
 export default App;
