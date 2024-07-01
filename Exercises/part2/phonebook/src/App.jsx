@@ -15,10 +15,10 @@ const Person = ({ name, number, remove }) => {
 const Title = ({ title }) => {
   return <h2>{title}</h2>;
 };
-const Phonelist = ({ personsToShow, removeItem }) => {
+const PhoneList = ({ persons, removeItem }) => {
   return (
     <>
-      {personsToShow.map((person) => (
+      {persons.map((person) => (
         <Person key={person.id} name={person.name} number={person.number} remove={() => removeItem(person.id)} />
       ))}
     </>
@@ -45,7 +45,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [number, setNumber] = useState('');
   const [nameFilter, setNameFilter] = useState('');
-  const [showAll, setShowAll] = useState(true);
+  const [personsFilter, setPersonsFilter] = useState([]);
   const [message, setMessage] = useState(null);
   const [err, setErr] = useState(null);
   const Notification = ({ message }) => {
@@ -63,14 +63,14 @@ const App = () => {
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
+      setPersonsFilter(initialPersons);
     });
   }, []);
   const handleNameFilter = (event) => {
-    setShowAll(false);
-    setNameFilter(event.target.value);
-    if (event.target.value === '') {
-      setShowAll(true);
-    }
+    const value = event.target.value;
+
+    setNameFilter(value);
+    setPersonsFilter(persons.filter((c) => c.name.toLowerCase().startsWith(value.toLowerCase())));
   };
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -85,23 +85,26 @@ const App = () => {
       number: number,
     };
     if (persons.some((obj) => obj.name === newName)) {
-      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+      if (window.confirm(`${newName} is already added to PhoneBook, replace the old number with a new one?`)) {
         const person = persons.find((p) => p.name === newName);
         const id = person.id;
         const changePerson = { ...person, number: number };
+
         personService
           .update(id, changePerson)
           .then((returnedPerson) => {
             setPersons(persons.map((person) => (person.id !== id ? person : returnedPerson)));
+            setPersonsFilter(personsFilter.map((person) => (person.id !== id ? person : returnedPerson)));
             setMessage(`Updated ${returnedPerson.name}`);
           })
-          .catch((error) => {
+          .catch(() => {
             setErr(`Information of ${person.name} has already been removed from server`);
           });
       }
     } else {
       personService.create(nameObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
+        setPersonsFilter(personsFilter.concat(returnedPerson));
         setMessage(`Added ${returnedPerson.name}`);
       });
     }
@@ -122,27 +125,26 @@ const App = () => {
   //     setPersons(persons.concat(nameObject));
   //     alert(`${newName} has been created`);
   //   } else {
-  //     alert(`${newName} is already added to phonebook`);
+  //     alert(`${newName} is already added to PhoneBook`);
   //   }
   //   setNewName('');
   // };
   const removeItem = (id) => {
     personService.remove(id).then(() => {
       setPersons(persons.filter((person) => person.id !== id));
+      setPersonsFilter(personsFilter.filter((person) => person.id !== id));
     });
   };
-
-  const personsToShow = showAll ? persons : persons.filter((person) => person.name === nameFilter);
   return (
     <>
-      <Title title={'Phonebook'} />
+      <Title title={'PhoneBook'} />
       <Notification message={message} />
       <Err message={err} />
-      filter shown with <input onChange={handleNameFilter} />
+      filter shown with <input value={nameFilter} onChange={handleNameFilter} />
       <Title title={'Add a new'} />
       <Form addPerson={addPerson} newName={newName} number={number} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
       <Title title={'Numbers'} />
-      <Phonelist personsToShow={personsToShow} removeItem={removeItem} />
+      <PhoneList persons={personsFilter} removeItem={removeItem} />
     </>
   );
 };
