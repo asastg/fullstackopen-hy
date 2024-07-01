@@ -29,6 +29,16 @@
       "id": "67ad",
       "content": "bai bai los datos los almacena en el estado pero no los retoma del servidor interesante",
       "important": false
+    },
+    {
+      "id": "8b32",
+      "content": "Trabajando en el frontend con el backend antiguo",
+      "important": true
+    },
+    {
+      "id": "d717",
+      "content": "another note",
+      "important": true
     }
   ]
 }
