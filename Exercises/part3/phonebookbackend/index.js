@@ -28,6 +28,7 @@ app.get('/api/persons', (request, response) => {
 });
 
 app.get('/info', (request, response) => {
+  console.log('Pirnti');
   response.send(`<p>Phonebook has info for ${Person.length} people</p> <p>${Date()}</p>`);
 });
 
@@ -66,9 +67,9 @@ app.post('/api/persons', (request, response) => {
 });
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-  response.status(204).end();
+  Person.findByIdAndDelete(request.params.id).then((result) => {
+    response.status(204).end();
+  });
 });
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
