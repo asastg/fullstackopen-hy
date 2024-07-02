@@ -98,15 +98,20 @@ const App = () => {
             setMessage(`Updated ${returnedPerson.name}`);
           })
           .catch(() => {
-            setErr(`Information of ${person.name} has already been removed from server`);
+            setErr('anything');
           });
       }
     } else {
-      personService.create(nameObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setPersonsFilter(personsFilter.concat(returnedPerson));
-        setMessage(`Added ${returnedPerson.name}`);
-      });
+      personService
+        .create(nameObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setPersonsFilter(personsFilter.concat(returnedPerson));
+          setMessage(`Added ${returnedPerson.name}`);
+        })
+        .catch((error) => {
+          setErr(error.response.data.error);
+        });
     }
     setTimeout(() => {
       setMessage(null);
