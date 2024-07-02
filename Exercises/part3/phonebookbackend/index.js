@@ -27,9 +27,10 @@ app.get('/api/persons', (request, response) => {
   });
 });
 
-app.get('/info', (request, response) => {
-  console.log('Pirnti');
-  response.send(`<p>Phonebook has info for ${Person.length} people</p> <p>${Date()}</p>`);
+app.get('/api/info', (request, response) => {
+  Person.find({}).then((persons) => {
+    response.send(`<p>PhoneBook has info for ${persons.length} people</p> <p>${Date()}</p>`);
+  });
 });
 
 app.get('/api/persons/:id', (request, response, next) => {
