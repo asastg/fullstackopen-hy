@@ -97,8 +97,8 @@ const App = () => {
             setPersonsFilter(personsFilter.map((person) => (person.id !== id ? person : returnedPerson)));
             setMessage(`Updated ${returnedPerson.name}`);
           })
-          .catch(() => {
-            setErr('anything');
+          .catch((error) => {
+            setErr(error.response.data.error);
           });
       }
     } else {
