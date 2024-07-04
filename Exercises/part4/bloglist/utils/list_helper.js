@@ -32,9 +32,33 @@ const mostBlog = (collection) => {
   return object
 }
 
+const mostLikes = (collection) => {
+  const countAuthors = _.countBy(_.map(collection, 'author'))
+  const authors = Object.keys(countAuthors)
+  const authorsLikes = authors.map((author) => {
+    return {
+      author: author,
+      likes: 0,
+    }
+  })
+  for (let i = 0; i < authorsLikes.length; i++) {
+    for (let j = 0; j < collection.length; j++) {
+      if (authorsLikes[i].author === collection[j].author) {
+        authorsLikes[i].likes += collection[j].likes
+      }
+    }
+  }
+  let most = {}
+  for (let i = 0; i < authorsLikes.length - 1; i++) {
+    if (authorsLikes[i].likes < authorsLikes[i + 1].likes) most = authorsLikes[i + 1]
+  }
+  return most
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlog,
+  mostLikes,
 }
