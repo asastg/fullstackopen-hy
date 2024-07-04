@@ -1,0 +1,13 @@
+
+Get http://localhost:3003/api/blogs
+###
+
+POST http://localhost:3003/api/blogs
+Content-type: application/json
+
+{
+  "title": "El tapón del Darien",
+  "author": "Andres Sastoque",
+  "url": "Te la creíste again wey",
+  "likes": 596
+}
